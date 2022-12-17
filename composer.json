@@ -1,0 +1,13 @@
+{
+    "name": "technicallysound/blog",
+    "description": "A blog for technical topics",
+    "require-dev": {
+        "phpunit/phpunit": "^9.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Technicallysound\\Blog\\": "src/"
+        }
+    },
+    "require": {}
+}
