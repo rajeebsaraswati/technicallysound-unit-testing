@@ -21,7 +21,7 @@ class CartTest extends TestCase
     }
 
 
-    public function atestCalculateTaxThrowsExceptionIfNoTaxRateIsFoundForTheGivenRegionId(): void
+    public function testCalculateTaxThrowsExceptionIfNoTaxRateIsFoundForTheGivenRegionId(): void
     {
         $customer = $this->getMockBuilder(Blog\Customer::class)
             ->onlyMethods(['getIsTaxExempted', 'getAddress'])
@@ -30,14 +30,23 @@ class CartTest extends TestCase
             ->method('getIsTaxExempted')
             ->willReturn(false);
 
-        $this->expectException(\Exception::class);
+        $address = $this->getMockBuilder(Blog\Address::class)
+            ->getMock();
+        $address->setRegionId(0);
+        $customer->expects($this->once())
+            ->method('getAddress')
+            ->willReturn($address);
+
+        $this->expectException(Exception::class);
+
+        $this->expectExceptionMessage("No tax rate found for the specified region id!");
 
         $cart = new Blog\Cart($customer);
 
         $cart->calculateTax();
     }
 
-    public function atestCalculateTaxReturnsZeroIfAllProductsInCartAreNonTaxable(): void
+    public function testCalculateTaxReturnsZeroIfAllProductsInCartAreNonTaxable(): void
     {
         $address = $this->getMockBuilder(Blog\Address::class)->getMock();
         $address->expects($this->once())->method('getRegionId')->willReturn(1);
@@ -66,7 +75,7 @@ class CartTest extends TestCase
         $this->assertEquals($result, 0);
     }
 
-    public function atestCalculateTax(): void
+    public function testCalculateTax(): void
     {
         $address = $this->getMockBuilder(Blog\Address::class)->getMock();
         $address->expects($this->once())->method('getRegionId')->willReturn(1);
